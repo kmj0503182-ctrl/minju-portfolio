@@ -1,26 +1,66 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --forest: #047857;
+  --sage: #10b981;
+  --mint: #f0fdf4;
+  --forest-deep: #065f46;
+  --ink: #14532d;
+  --muted: #5b7264;
+  --line: #d1fae5;
+  --paper: #ffffff;
+  --shell: #eef7f1;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-forest: var(--forest);
+  --color-sage: var(--sage);
+  --color-mint: var(--mint);
+  --color-forest-deep: var(--forest-deep);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-paper: var(--paper);
+  --color-shell: var(--shell);
+  --font-sans: var(--font-noto);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--shell);
+  color: var(--ink);
+  font-family: var(--font-noto), "Noto Sans KR", sans-serif;
+}
+
+.hatch {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(4, 120, 87, 0.18) 0 6px,
+    transparent 6px 12px
+  );
+}
+
+.hatch-strong {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.22) 0 7px,
+    transparent 7px 14px
+  );
+}
+
+.wave-bg {
+  background-image:
+    radial-gradient(circle at 18% 18%, rgba(16, 185, 129, 0.28), transparent 42%),
+    radial-gradient(circle at 86% 86%, rgba(6, 95, 70, 0.45), transparent 48%);
+}
+
+.card-shadow {
+  box-shadow: 0 10px 30px -18px rgba(4, 120, 87, 0.28);
+}
+
+.soft-ring {
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.12), 0 12px 28px -20px rgba(4, 120, 87, 0.35);
 }
