@@ -35,18 +35,45 @@ type NotionPage = { properties: Record<string, any> };
 
 const plain = (items: any[] | undefined) => (items ?? []).map((t) => t.plain_text).join("").trim();
 
+// Accepts both the intended property types and plain-text columns left over from CSV import.
+function text(prop: any): string {
+  if (!prop) return "";
+  switch (prop.type) {
+    case "title":
+    case "rich_text":
+      return plain(prop[prop.type]);
+    case "select":
+      return prop.select?.name ?? "";
+    case "number":
+      return prop.number == null ? "" : String(prop.number);
+    case "checkbox":
+      return prop.checkbox ? "Yes" : "";
+    default:
+      return "";
+  }
+}
+
+function list(prop: any): string[] {
+  if (prop?.type === "multi_select") return prop.multi_select.map((t: any) => t.name as string);
+  return text(prop)
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+}
+
 function read(page: NotionPage) {
   const p = page.properties;
   const file = p["이미지"]?.files?.[0];
+  const order = Number(text(p["순서"]));
   return {
-    name: plain(p["이름"]?.title),
-    category: p["분류"]?.select?.name ?? "",
-    period: plain(p["기간"]?.rich_text),
-    role: plain(p["소속·역할"]?.rich_text),
-    desc: plain(p["설명"]?.rich_text),
-    tags: (p["태그"]?.multi_select ?? []).map((t: any) => t.name as string),
-    order: (p["순서"]?.number as number | null) ?? 999,
-    visible: p["공개"]?.checkbox === true,
+    name: text(p["이름"]),
+    category: text(p["분류"]),
+    period: text(p["기간"]),
+    role: text(p["소속·역할"]),
+    desc: text(p["설명"]),
+    tags: list(p["태그"]),
+    order: text(p["순서"]) && !Number.isNaN(order) ? order : 999,
+    visible: /^(yes|y|true|o|공개|예|✅)$/i.test(text(p["공개"])),
     image: (file?.file?.url ?? file?.external?.url) as string | undefined,
   };
 }
