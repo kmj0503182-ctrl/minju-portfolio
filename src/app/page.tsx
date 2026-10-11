@@ -3,29 +3,23 @@ import { ArrowUpRight, Award, MapPin } from "lucide-react";
 import { AppShell } from "../components/AppShell";
 import { ContactForm } from "../components/ContactForm";
 import { ImageSlot } from "../components/ImageSlot";
-import {
-  awards,
-  campusActivities,
-  gpa,
-  practices,
-  practicum,
-  profile,
-  projects,
-  skills,
-  strengths,
-  vision,
-  volunteerSummary,
-  volunteers,
-} from "../data/portfolio";
+import { gpa, profile, skills, strengths, vision, volunteerSummary } from "../data/portfolio";
+import { getContent, type Content, type Practicum } from "../lib/content";
 
-export default function Home() {
+export default async function Home() {
+  const content = await getContent();
+
   return (
     <AppShell>
       <Hero />
-      <PracticeSection />
-      <CampusSection />
-      <ProjectsSection />
-      <AwardsSection />
+      <PracticeSection
+        practicum={content.practicum}
+        practices={content.practices}
+        volunteers={content.volunteers}
+      />
+      <CampusSection campusActivities={content.campusActivities} />
+      <ProjectsSection projects={content.projects} />
+      <AwardsSection awards={content.awards} />
       <ContactSection />
     </AppShell>
   );
@@ -90,14 +84,18 @@ function Hero() {
   );
 }
 
-function PracticeSection() {
+function PracticeSection({
+  practicum,
+  practices,
+  volunteers,
+}: Pick<Content, "practicum" | "practices" | "volunteers">) {
   return (
     <section id="practice" className="mt-12 scroll-mt-24">
       <SectionTitle
         kicker="Field practice & volunteer"
         title="사회복지 현장 · 자원봉사 경험"
       />
-      <PracticumCard />
+      {practicum ? <PracticumCard practicum={practicum} /> : null}
       <div className="mt-4 grid gap-4 lg:grid-cols-3">
         {practices.map((item) => (
           <article key={item.place} className="flex flex-col rounded-2xl bg-white p-5 card-shadow">
@@ -134,7 +132,7 @@ function PracticeSection() {
   );
 }
 
-function PracticumCard() {
+function PracticumCard({ practicum }: { practicum: Practicum }) {
   return (
     <article className="rounded-2xl bg-white p-5 card-shadow">
       <div className="flex items-start justify-between gap-3">
@@ -194,7 +192,7 @@ function GpaChart() {
   );
 }
 
-function CampusSection() {
+function CampusSection({ campusActivities }: Pick<Content, "campusActivities">) {
   return (
     <section id="campus" className="mt-12 scroll-mt-24">
       <SectionTitle kicker="Campus archive" title="교내 활동 아카이브" />
@@ -255,7 +253,7 @@ function CampusSection() {
   );
 }
 
-function ProjectsSection() {
+function ProjectsSection({ projects }: Pick<Content, "projects">) {
   return (
     <section id="projects" className="mt-12 scroll-mt-24">
       <SectionTitle kicker="Original projects" title="자체 제작 프로젝트" />
@@ -301,7 +299,7 @@ function ProjectsSection() {
   );
 }
 
-function AwardsSection() {
+function AwardsSection({ awards }: Pick<Content, "awards">) {
   return (
     <section id="awards" className="mt-12 scroll-mt-24">
       <SectionTitle kicker="Credentials" title="수상 및 자격증" />

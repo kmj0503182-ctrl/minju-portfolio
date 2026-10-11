@@ -17,7 +17,14 @@ export function ImageSlot({
   if (src) {
     return (
       <div className={`relative overflow-hidden rounded-2xl ${className}`}>
-        <Image src={src} alt={alt} fill sizes="(max-width: 768px) 50vw, 320px" className="object-cover" />
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes="(max-width: 768px) 50vw, 320px"
+          unoptimized={src.startsWith("http")}
+          className="object-cover"
+        />
       </div>
     );
   }
