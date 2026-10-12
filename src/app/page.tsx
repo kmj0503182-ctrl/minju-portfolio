@@ -3,7 +3,8 @@ import { ArrowUpRight, Award, MapPin } from "lucide-react";
 import { AppShell } from "../components/AppShell";
 import { ContactForm } from "../components/ContactForm";
 import { ImageSlot } from "../components/ImageSlot";
-import { gpa, profile, skills, strengths, vision, volunteerSummary } from "../data/portfolio";
+import { Fragment } from "react";
+import { profile } from "../data/portfolio";
 import { getContent, type Content, type Practicum } from "../lib/content";
 
 export default async function Home() {
@@ -11,16 +12,21 @@ export default async function Home() {
 
   return (
     <AppShell>
-      <Hero />
+      <Hero intro={content.intro} vision={content.vision} />
       <PracticeSection
         practicum={content.practicum}
         practices={content.practices}
         volunteers={content.volunteers}
       />
-      <CampusSection campusActivities={content.campusActivities} />
+      <CampusSection
+        intro={content.intro}
+        strengths={content.strengths}
+        gpa={content.gpa}
+        campusActivities={content.campusActivities}
+      />
       <ProjectsSection projects={content.projects} />
-      <AwardsSection awards={content.awards} />
-      <ContactSection />
+      <AwardsSection awards={content.awards} skills={content.skills} />
+      <ContactSection intro={content.intro} contactValues={content.contactValues} />
     </AppShell>
   );
 }
@@ -47,20 +53,23 @@ function SectionTitle({
   );
 }
 
-function Hero() {
+function Hero({ intro, vision }: Pick<Content, "intro" | "vision">) {
   return (
     <section id="home" className="scroll-mt-24">
       <div className="flex flex-col-reverse gap-6 rounded-2xl bg-white p-6 card-shadow sm:p-8 md:flex-row md:items-center md:justify-between">
         <div className="max-w-2xl">
-          <p className="text-sm font-medium text-sage">
-            {profile.school} · {profile.role}
-          </p>
+          <p className="text-sm font-medium text-sage">{intro.affiliation}</p>
           <h1 className="mt-2 text-3xl leading-tight font-semibold tracking-tight text-ink sm:text-4xl">
-            세상을 다정하게 자라나게 하는
-            <br className="hidden sm:block" /> 사회복지사, 김민주
+            {intro.headline.split("\n").map((line, index) => (
+              <Fragment key={index}>
+                {index > 0 ? <br className="hidden sm:block" /> : null}
+                {index > 0 ? " " : null}
+                {line}
+              </Fragment>
+            ))}
           </h1>
           <p className="mt-3 max-w-xl text-[15px] leading-7 text-muted sm:text-base">
-            {profile.tagline} {profile.bio}
+            {intro.tagline} {intro.bio}
           </p>
           <ul className="mt-6 space-y-3">
             {vision.map((item) => (
@@ -157,9 +166,12 @@ function PracticumCard({ practicum }: { practicum: Practicum }) {
   );
 }
 
-function GpaChart() {
-  const min = 4.0;
+function GpaChart({ gpa }: Pick<Content, "gpa">) {
+  const lowest = Math.min(...gpa.map((item) => item.value));
+  const min = lowest >= 4 ? 4.0 : Math.floor(lowest * 2) / 2 - 0.5;
   const max = 4.5;
+  const first = gpa[0]?.value ?? 0;
+  const last = gpa[gpa.length - 1]?.value ?? 0;
 
   return (
     <article className="rounded-2xl bg-white p-5 card-shadow">
@@ -187,12 +199,19 @@ function GpaChart() {
           );
         })}
       </div>
-      <p className="mt-4 text-center text-xs text-muted">평점 4.08에서 4.33으로 꾸준히 상승</p>
+      <p className="mt-4 text-center text-xs text-muted">
+        {last > first ? `평점 ${first.toFixed(2)}에서 ${last.toFixed(2)}까지 꾸준히 상승` : "학년별 평점"}
+      </p>
     </article>
   );
 }
 
-function CampusSection({ campusActivities }: Pick<Content, "campusActivities">) {
+function CampusSection({
+  intro,
+  strengths,
+  gpa,
+  campusActivities,
+}: Pick<Content, "intro" | "strengths" | "gpa" | "campusActivities">) {
   return (
     <section id="campus" className="mt-12 scroll-mt-24">
       <SectionTitle kicker="Campus archive" title="교내 활동 아카이브" />
@@ -214,7 +233,7 @@ function CampusSection({ campusActivities }: Pick<Content, "campusActivities">) 
           </ul>
         </article>
 
-        <GpaChart />
+        <GpaChart gpa={gpa} />
 
         <div className="grid gap-4">
           {campusActivities.slice(0, 2).map((item) => (
@@ -232,11 +251,11 @@ function CampusSection({ campusActivities }: Pick<Content, "campusActivities">) 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <article className="rounded-2xl border border-line bg-white p-4">
           <div className="mb-2 flex items-center justify-between">
-            <p className="text-xs text-muted">{volunteerSummary.label}</p>
+            <p className="text-xs text-muted">{intro.volunteerLabel}</p>
             <ArrowUpRight className="h-4 w-4 text-sage" />
           </div>
-          <p className="text-2xl font-semibold text-ink">{volunteerSummary.value}</p>
-          <p className="mt-1 text-sm text-muted">{volunteerSummary.hint}</p>
+          <p className="text-2xl font-semibold text-ink">{intro.volunteerValue}</p>
+          <p className="mt-1 text-sm text-muted">{intro.volunteerHint}</p>
         </article>
         {campusActivities.slice(2).map((item) => (
           <article key={item.title} className="rounded-2xl border border-line bg-white p-4">
@@ -299,7 +318,7 @@ function ProjectsSection({ projects }: Pick<Content, "projects">) {
   );
 }
 
-function AwardsSection({ awards }: Pick<Content, "awards">) {
+function AwardsSection({ awards, skills }: Pick<Content, "awards" | "skills">) {
   return (
     <section id="awards" className="mt-12 scroll-mt-24">
       <SectionTitle kicker="Credentials" title="수상 및 자격증" />
@@ -322,7 +341,7 @@ function AwardsSection({ awards }: Pick<Content, "awards">) {
       <h3 className="mt-8 mb-4 font-semibold text-ink">활용 가능한 도구</h3>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {skills.map((item) => (
-          <article key={item.label} className="rounded-2xl border border-line bg-white p-5">
+          <article key={item.title} className="rounded-2xl border border-line bg-white p-5">
             <span className="rounded-full bg-forest px-3 py-1 text-[11px] font-semibold text-white">
               {item.label}
             </span>
@@ -335,30 +354,28 @@ function AwardsSection({ awards }: Pick<Content, "awards">) {
   );
 }
 
-function ContactSection() {
+function ContactSection({ intro, contactValues }: Pick<Content, "intro" | "contactValues">) {
   return (
     <section id="contact" className="mt-12 mb-4 scroll-mt-24">
       <SectionTitle kicker="Connect" title="연락처" />
       <div className="grid gap-4 lg:grid-cols-[1fr_1.1fr]">
         <article className="hatch-strong flex flex-col justify-between overflow-hidden rounded-2xl bg-forest p-6 text-white">
           <div>
-            <p className="text-sm text-emerald-100">함께 성장하는 미래를 꿈꿉니다</p>
-            <h3 className="mt-2 text-2xl font-semibold">경청하고 실천하는 사회복지사 {profile.name}</h3>
+            <p className="text-sm text-emerald-100">{intro.contactTitle}</p>
+            <h3 className="mt-2 text-2xl font-semibold">{intro.contactLead}</h3>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl bg-white/10 p-4">
-                <p className="font-semibold">경청</p>
-                <p className="mt-1 text-sm text-emerald-50">마음을 다해 듣겠습니다</p>
-              </div>
-              <div className="rounded-2xl bg-white/10 p-4">
-                <p className="font-semibold">실천</p>
-                <p className="mt-1 text-sm text-emerald-50">행동으로 증명하겠습니다</p>
-              </div>
+              {contactValues.map((item) => (
+                <div key={item.title} className="rounded-2xl bg-white/10 p-4">
+                  <p className="font-semibold">{item.title}</p>
+                  <p className="mt-1 text-sm text-emerald-50">{item.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
           <ul className="mt-8 space-y-3 text-sm">
             <li className="flex items-center gap-2">
               <MapPin className="h-4 w-4" />
-              {profile.location}
+              {intro.location}
             </li>
             <li>
               <a className="underline decoration-emerald-200 underline-offset-4" href={`mailto:${profile.email}`}>

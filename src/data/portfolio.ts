@@ -7,7 +7,15 @@ export const profile = {
   photo: "/profile.jpg",
   tagline: "사람의 마음을 읽고, 기술로 해결책을 제시합니다.",
   bio: "성실함과 리더십을 바탕으로 봉사 현장을 이끌어 왔고, 당사자의 목소리를 데이터와 AI로 서비스에 담아내는 사회복지사를 꿈꿉니다.",
+  headline: "세상을 다정하게 자라나게 하는\n사회복지사, 김민주",
+  contactTitle: "함께 성장하는 미래를 꿈꿉니다",
+  contactLead: "경청하고 실천하는 사회복지사 김민주",
 };
+
+export const contactValues = [
+  { title: "경청", desc: "마음을 다해 듣겠습니다" },
+  { title: "실천", desc: "행동으로 증명하겠습니다" },
+];
 
 export const vision = [
   { label: "Attitude", text: "성실함과 리더십을 겸비한 사회복지 전문가 지망생" },
