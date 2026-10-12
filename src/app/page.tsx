@@ -284,42 +284,28 @@ function ProjectsSection({ projects }: Pick<Content, "projects">) {
     <section id="projects" aria-labelledby="projects-title" className="mt-12 scroll-mt-24">
       <SectionTitle id="projects-title" kicker="Original projects" title="자체 제작 프로젝트" />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {projects.map((project, index) => {
-          const dark = index === 0;
-          return (
-            <article
-              key={project.title}
-              className={`flex flex-col gap-4 rounded-2xl p-4 ${dark ? "hatch-strong bg-forest-deep text-white" : "bg-white card-shadow"}`}
-            >
-              <ImageSlot
-                src={project.image}
-                alt={project.imageAlt ?? `${project.title} 대표 이미지`}
-                label="대표 이미지 (가로형)"
-                dark={dark}
-                className="aspect-video w-full"
-              />
-              <div className="flex flex-1 flex-col px-1 pb-1">
-                <p className={`text-xs ${dark ? "text-emerald-100" : "text-sage"}`}>{project.period}</p>
-                <h3 className="mt-2 text-lg font-semibold">{project.title}</h3>
-                <p className={`mt-2 text-sm leading-6 ${dark ? "text-emerald-50" : "text-muted"}`}>
-                  {project.summary}
-                </p>
-                <div className="mt-auto flex flex-wrap gap-2 pt-4">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className={`rounded-full px-3 py-1 text-xs ${
-                        dark ? "bg-white/15 text-white" : "bg-mint text-forest"
-                      }`}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+        {projects.map((project) => (
+          <article key={project.title} className="flex flex-col gap-4 rounded-2xl bg-white p-4 card-shadow">
+            <ImageSlot
+              src={project.image}
+              alt={project.imageAlt ?? `${project.title} 대표 이미지`}
+              label="대표 이미지 (가로형)"
+              className="aspect-video w-full"
+            />
+            <div className="flex flex-1 flex-col px-1 pb-1">
+              <p className="text-xs text-sage">{project.period}</p>
+              <h3 className="mt-2 text-lg font-semibold">{project.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted">{project.summary}</p>
+              <div className="mt-auto flex flex-wrap gap-2 pt-4">
+                {project.tags.map((tag) => (
+                  <span key={tag} className="rounded-full bg-mint px-3 py-1 text-xs text-forest">
+                    {tag}
+                  </span>
+                ))}
               </div>
-            </article>
-          );
-        })}
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   );
