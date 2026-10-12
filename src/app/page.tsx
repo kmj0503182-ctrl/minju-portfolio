@@ -21,7 +21,6 @@ export default async function Home() {
       <ProjectsSection projects={content.projects} />
       <AwardsSection awards={content.awards} />
       <ContactSection />
-      <div hidden data-content-source={content.source} />
     </AppShell>
   );
 }
