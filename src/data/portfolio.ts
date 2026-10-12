@@ -149,6 +149,7 @@ export const projects: {
   tags: string[];
   image?: string;
   imageAlt?: string;
+  link?: string;
 }[] = [
   {
     title: "출근길 3GO 보수교육 콘텐츠",

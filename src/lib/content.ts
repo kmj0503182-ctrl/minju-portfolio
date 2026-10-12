@@ -34,7 +34,7 @@ export type Content = {
   practices: { place: string; period: string; role: string; tags: string[]; summary: string }[];
   volunteers: { title: string; org: string; period: string; note: string }[];
   campusActivities: { title: string; date: string; desc: string; color: string }[];
-  projects: { title: string; period: string; summary: string; tags: string[]; image?: string; imageAlt?: string }[];
+  projects: { title: string; period: string; summary: string; tags: string[]; image?: string; imageAlt?: string; link?: string }[];
   awards: { title: string; org: string; year: string; type: string }[];
 };
 
@@ -102,6 +102,8 @@ function text(prop: any): string {
       return prop.number == null ? "" : String(prop.number);
     case "checkbox":
       return prop.checkbox ? "Yes" : "";
+    case "url":
+      return prop.url ?? "";
     default:
       return "";
   }
@@ -130,7 +132,19 @@ function read(page: NotionPage) {
     visible: /^(yes|y|true|o|공개|예|✅)$/i.test(text(p["공개"])),
     image: (file?.file?.url ?? file?.external?.url) as string | undefined,
     imageAlt: text(p["이미지 설명"]),
+    link: toLink(text(p["링크"])),
   };
+}
+
+function toLink(value: string): string | undefined {
+  const url = value.trim();
+  if (!url) return undefined;
+  const full = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+  try {
+    return new URL(full).toString();
+  } catch {
+    return undefined;
+  }
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -254,6 +268,7 @@ export async function getContent(): Promise<Content> {
         tags: row.tags,
         image: row.image,
         imageAlt: row.imageAlt || undefined,
+        link: row.link,
       })),
       awards: of("수상·자격").map((row) => ({
         title: row.name,

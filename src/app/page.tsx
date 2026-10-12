@@ -286,15 +286,50 @@ function ProjectsSection({ projects }: Pick<Content, "projects">) {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {projects.map((project) => (
           <article key={project.title} className="flex flex-col gap-4 rounded-2xl bg-white p-4 card-shadow">
-            <ImageSlot
-              src={project.image}
-              alt={project.imageAlt ?? `${project.title} 대표 이미지`}
-              label="대표 이미지 (가로형)"
-              className="aspect-video w-full"
-            />
+            {project.link ? (
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                tabIndex={-1}
+                className="block rounded-2xl transition hover:opacity-90"
+              >
+                <ImageSlot
+                  src={project.image}
+                  alt={project.imageAlt ?? `${project.title} 대표 이미지`}
+                  label="대표 이미지 (가로형)"
+                  className="aspect-video w-full"
+                />
+              </a>
+            ) : (
+              <ImageSlot
+                src={project.image}
+                alt={project.imageAlt ?? `${project.title} 대표 이미지`}
+                label="대표 이미지 (가로형)"
+                className="aspect-video w-full"
+              />
+            )}
             <div className="flex flex-1 flex-col px-1 pb-1">
               <p className="text-xs text-sage">{project.period}</p>
-              <h3 className="mt-2 text-lg font-semibold">{project.title}</h3>
+              <h3 className="mt-2 text-lg font-semibold">
+                {project.link ? (
+                  <a
+                    href={project.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-md underline-offset-4 hover:text-forest hover:underline"
+                  >
+                    {project.title.slice(0, project.title.lastIndexOf(" ") + 1)}
+                    <span className="whitespace-nowrap">
+                      {project.title.slice(project.title.lastIndexOf(" ") + 1)}
+                      <ArrowUpRight aria-hidden="true" className="ml-1 inline h-4 w-4 align-[-2px] text-sage" />
+                    </span>
+                    <span className="sr-only"> (새 탭에서 열림)</span>
+                  </a>
+                ) : (
+                  project.title
+                )}
+              </h3>
               <p className="mt-2 text-sm leading-6 text-muted">{project.summary}</p>
               <div className="mt-auto flex flex-wrap gap-2 pt-4">
                 {project.tags.map((tag) => (
