@@ -147,17 +147,7 @@ async function notionFetch(path: string, version: string, body?: unknown) {
   return res.json();
 }
 
-async function queryAll(databaseId: string): Promise<NotionPage[]> {
-  let path = `databases/${databaseId}/query`;
-  let version = "2022-06-28";
-  try {
-    await notionFetch(path, version, { page_size: 1 });
-  } catch {
-    const db = await notionFetch(`databases/${databaseId}`, "2025-09-03");
-    path = `data_sources/${db.data_sources[0].id}/query`;
-    version = "2025-09-03";
-  }
-
+async function queryPath(path: string, version: string): Promise<NotionPage[]> {
   const pages: NotionPage[] = [];
   let cursor: string | undefined;
   do {
@@ -166,6 +156,24 @@ async function queryAll(databaseId: string): Promise<NotionPage[]> {
     cursor = data.has_more ? data.next_cursor : undefined;
   } while (cursor);
   return pages;
+}
+
+// The legacy database query endpoint can omit rows added by a CSV merge; read every data source instead.
+async function queryAll(databaseId: string): Promise<NotionPage[]> {
+  const version = "2025-09-03";
+  try {
+    const db = await notionFetch(`databases/${databaseId}`, version);
+    const sources: { id: string }[] = db.data_sources ?? [];
+    if (sources.length > 0) {
+      const results = await Promise.all(
+        sources.map((source) => queryPath(`data_sources/${source.id}/query`, version)),
+      );
+      return results.flat();
+    }
+  } catch (error) {
+    console.error(error);
+  }
+  return queryPath(`databases/${databaseId}/query`, "2022-06-28");
 }
 
 export async function getContent(): Promise<Content> {
