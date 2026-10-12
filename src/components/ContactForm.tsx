@@ -47,7 +47,7 @@ export function ContactForm() {
 
   if (status === "sent") {
     return (
-      <div className="rounded-2xl bg-mint p-6 text-center">
+      <div role="status" className="rounded-2xl bg-mint p-6 text-center">
         <p className="font-semibold text-forest">메시지를 보내 주셔서 감사합니다.</p>
         <p className="mt-2 text-sm leading-relaxed text-muted">
           {profile.email} 으로 전달되었습니다. 처음 보낼 때는 Gmail에서 FormSubmit 확인 메일의 링크를 한 번 눌러 주세요.
@@ -63,7 +63,8 @@ export function ContactForm() {
         <input
           required
           name="name"
-          className="w-full rounded-2xl border border-line bg-mint/50 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sage/40"
+          autoComplete="name"
+          className="w-full rounded-2xl border border-sage/70 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sage/40"
           placeholder="이름"
         />
       </label>
@@ -73,7 +74,8 @@ export function ContactForm() {
           required
           type="email"
           name="email"
-          className="w-full rounded-2xl border border-line bg-mint/50 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sage/40"
+          autoComplete="email"
+          className="w-full rounded-2xl border border-sage/70 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sage/40"
           placeholder="회신받을 이메일"
         />
       </label>
@@ -83,12 +85,12 @@ export function ContactForm() {
           required
           name="message"
           rows={4}
-          className="w-full resize-none rounded-2xl border border-line bg-mint/50 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sage/40"
+          className="w-full resize-none rounded-2xl border border-sage/70 bg-white px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-sage/40"
           placeholder="전하고 싶은 말을 적어 주세요."
         />
       </label>
       {status === "error" ? (
-        <p className="text-sm text-red-600">
+        <p role="alert" className="text-sm text-red-700">
           전송에 실패했습니다. {profile.email} 로 직접 메일을 보내 주세요.
         </p>
       ) : null}

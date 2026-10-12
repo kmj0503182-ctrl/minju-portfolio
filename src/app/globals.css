@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --forest: #047857;
-  --sage: #10b981;
-  --mint: #f0fdf4;
-  --forest-deep: #065f46;
+  --forest: #065f46;
+  --sage: #047857;
+  --accent: #10b981;
+  --mint: #e6f6ec;
+  --forest-deep: #064e3b;
   --ink: #14532d;
-  --muted: #5b7264;
-  --line: #d1fae5;
+  --muted: #4a5d52;
+  --line: #a7d8bf;
   --paper: #ffffff;
   --shell: #eef7f1;
 }
@@ -15,6 +16,7 @@
 @theme inline {
   --color-forest: var(--forest);
   --color-sage: var(--sage);
+  --color-accent: var(--accent);
   --color-mint: var(--mint);
   --color-forest-deep: var(--forest-deep);
   --color-ink: var(--ink);
@@ -29,6 +31,33 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--forest);
+  outline-offset: 2px;
+}
+
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
+.skip-link {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 60;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
 body {
   background: var(--shell);
   color: var(--ink);
@@ -38,7 +67,7 @@ body {
 .hatch {
   background-image: repeating-linear-gradient(
     -45deg,
-    rgba(4, 120, 87, 0.18) 0 6px,
+    rgba(6, 95, 70, 0.2) 0 6px,
     transparent 6px 12px
   );
 }
@@ -58,9 +87,9 @@ body {
 }
 
 .card-shadow {
-  box-shadow: 0 10px 30px -18px rgba(4, 120, 87, 0.28);
+  box-shadow: 0 10px 30px -18px rgba(6, 95, 70, 0.3);
 }
 
 .soft-ring {
-  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.12), 0 12px 28px -20px rgba(4, 120, 87, 0.35);
+  box-shadow: 0 0 0 1px rgba(6, 95, 70, 0.14), 0 12px 28px -20px rgba(6, 95, 70, 0.35);
 }

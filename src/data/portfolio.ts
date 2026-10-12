@@ -114,7 +114,7 @@ export const campusActivities = [
     title: "총학생회 자치협력국 차장",
     date: "2024",
     desc: "총학생회칙 개정과 안내 가이드 카드뉴스 제작, 전체학생전학대회 집행위원을 맡았습니다.",
-    color: "bg-sage",
+    color: "bg-accent",
   },
   {
     title: "학생 행사 기획 · 운영 주체",
@@ -148,6 +148,7 @@ export const projects: {
   summary: string;
   tags: string[];
   image?: string;
+  imageAlt?: string;
 }[] = [
   {
     title: "출근길 3GO 보수교육 콘텐츠",

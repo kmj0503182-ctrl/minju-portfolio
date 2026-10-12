@@ -32,10 +32,12 @@ export default async function Home() {
 }
 
 function SectionTitle({
+  id,
   kicker,
   title,
   action,
 }: {
+  id: string;
   kicker?: string;
   title: string;
   action?: ReactNode;
@@ -46,7 +48,7 @@ function SectionTitle({
         {kicker ? (
           <p className="mb-1 text-xs font-semibold tracking-wide text-sage uppercase">{kicker}</p>
         ) : null}
-        <h2 className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">{title}</h2>
+        <h2 id={id} className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">{title}</h2>
       </div>
       {action}
     </div>
@@ -55,11 +57,11 @@ function SectionTitle({
 
 function Hero({ intro, vision }: Pick<Content, "intro" | "vision">) {
   return (
-    <section id="home" className="scroll-mt-24">
+    <section id="home" aria-labelledby="home-title" className="scroll-mt-24">
       <div className="flex flex-col-reverse gap-6 rounded-2xl bg-white p-6 card-shadow sm:p-8 md:flex-row md:items-center md:justify-between">
         <div className="max-w-2xl">
           <p className="text-sm font-medium text-sage">{intro.affiliation}</p>
-          <h1 className="mt-2 text-3xl leading-tight font-semibold tracking-tight text-ink sm:text-4xl">
+          <h1 id="home-title" className="mt-2 text-3xl leading-tight font-semibold tracking-tight text-ink sm:text-4xl">
             {intro.headline.split("\n").map((line, index) => (
               <Fragment key={index}>
                 {index > 0 ? <br className="hidden sm:block" /> : null}
@@ -84,7 +86,7 @@ function Hero({ intro, vision }: Pick<Content, "intro" | "vision">) {
         </div>
         <ImageSlot
           src={profile.photo}
-          alt={`${profile.name} 프로필`}
+          alt={`가톨릭대학교 사회복지학과 ${profile.name} 프로필 사진`}
           label="사진 또는 캐릭터"
           className="aspect-[4/5] w-36 shrink-0 self-center sm:w-44 md:w-52"
         />
@@ -99,8 +101,9 @@ function PracticeSection({
   volunteers,
 }: Pick<Content, "practicum" | "practices" | "volunteers">) {
   return (
-    <section id="practice" className="mt-12 scroll-mt-24">
+    <section id="practice" aria-labelledby="practice-title" className="mt-12 scroll-mt-24">
       <SectionTitle
+        id="practice-title"
         kicker="Field practice & volunteer"
         title="사회복지 현장 · 자원봉사 경험"
       />
@@ -179,7 +182,11 @@ function GpaChart({ gpa }: Pick<Content, "gpa">) {
         <h3 className="font-semibold text-ink">학업 성취도</h3>
         <span className="rounded-full bg-mint px-3 py-1 text-xs font-medium text-forest">평점 / 4.5</span>
       </div>
-      <div className="mt-6 flex h-44 items-end justify-around gap-4">
+      <div
+        role="img"
+        aria-label={`학년별 평점(4.5 만점): ${gpa.map((item) => `${item.year} ${item.value.toFixed(2)}`).join(", ")}`}
+        className="mt-6 flex h-44 items-end justify-around gap-4"
+      >
         {gpa.map((item, index) => {
           const latest = index === gpa.length - 1;
           const height = ((item.value - min) / (max - min)) * 100;
@@ -190,7 +197,7 @@ function GpaChart({ gpa }: Pick<Content, "gpa">) {
               </span>
               <div className="flex h-32 w-full items-end justify-center">
                 <div
-                  className={`w-[60%] max-w-12 rounded-full ${latest ? "bg-sage" : "hatch bg-emerald-100"}`}
+                  className={`w-[60%] max-w-12 rounded-full ${latest ? "bg-accent" : "hatch bg-emerald-100"}`}
                   style={{ height: `${Math.max(height, 12)}%` }}
                 />
               </div>
@@ -213,8 +220,8 @@ function CampusSection({
   campusActivities,
 }: Pick<Content, "intro" | "strengths" | "gpa" | "campusActivities">) {
   return (
-    <section id="campus" className="mt-12 scroll-mt-24">
-      <SectionTitle kicker="Campus archive" title="교내 활동 아카이브" />
+    <section id="campus" aria-labelledby="campus-title" className="mt-12 scroll-mt-24">
+      <SectionTitle id="campus-title" kicker="Campus archive" title="교내 활동 아카이브" />
       <div className="grid gap-4 lg:grid-cols-[1.15fr_0.95fr_0.9fr]">
         <article className="rounded-2xl bg-white p-5 card-shadow">
           <h3 className="mb-5 font-semibold text-ink">활동으로 키운 역량</h3>
@@ -239,7 +246,7 @@ function CampusSection({
           {campusActivities.slice(0, 2).map((item) => (
             <article key={item.title} className="rounded-2xl bg-white p-5 card-shadow">
               <div className="mb-3 flex items-center gap-2">
-                <span className={`h-2.5 w-2.5 rounded-full ${item.color}`} />
+                <span aria-hidden="true" className={`h-2.5 w-2.5 rounded-full ${item.color}`} />
                 <p className="text-xs text-muted">{item.date}</p>
               </div>
               <h3 className="font-semibold text-ink">{item.title}</h3>
@@ -252,7 +259,7 @@ function CampusSection({
         <article className="rounded-2xl border border-line bg-white p-4">
           <div className="mb-2 flex items-center justify-between">
             <p className="text-xs text-muted">{intro.volunteerLabel}</p>
-            <ArrowUpRight className="h-4 w-4 text-sage" />
+            <ArrowUpRight aria-hidden="true" className="h-4 w-4 text-sage" />
           </div>
           <p className="text-2xl font-semibold text-ink">{intro.volunteerValue}</p>
           <p className="mt-1 text-sm text-muted">{intro.volunteerHint}</p>
@@ -260,7 +267,7 @@ function CampusSection({
         {campusActivities.slice(2).map((item) => (
           <article key={item.title} className="rounded-2xl border border-line bg-white p-4">
             <div className="mb-2 flex items-center gap-2">
-              <span className={`h-2.5 w-2.5 rounded-full ${item.color}`} />
+              <span aria-hidden="true" className={`h-2.5 w-2.5 rounded-full ${item.color}`} />
               <p className="text-xs text-muted">{item.date}</p>
             </div>
             <h3 className="font-semibold text-ink">{item.title}</h3>
@@ -274,8 +281,8 @@ function CampusSection({
 
 function ProjectsSection({ projects }: Pick<Content, "projects">) {
   return (
-    <section id="projects" className="mt-12 scroll-mt-24">
-      <SectionTitle kicker="Original projects" title="자체 제작 프로젝트" />
+    <section id="projects" aria-labelledby="projects-title" className="mt-12 scroll-mt-24">
+      <SectionTitle id="projects-title" kicker="Original projects" title="자체 제작 프로젝트" />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {projects.map((project, index) => {
           const dark = index === 0;
@@ -286,7 +293,7 @@ function ProjectsSection({ projects }: Pick<Content, "projects">) {
             >
               <ImageSlot
                 src={project.image}
-                alt={`${project.title} 대표 이미지`}
+                alt={project.imageAlt ?? `${project.title} 대표 이미지`}
                 label="대표 이미지 (가로형)"
                 dark={dark}
                 className="aspect-video w-full"
@@ -320,12 +327,15 @@ function ProjectsSection({ projects }: Pick<Content, "projects">) {
 
 function AwardsSection({ awards, skills }: Pick<Content, "awards" | "skills">) {
   return (
-    <section id="awards" className="mt-12 scroll-mt-24">
-      <SectionTitle kicker="Credentials" title="수상 및 자격증" />
+    <section id="awards" aria-labelledby="awards-title" className="mt-12 scroll-mt-24">
+      <SectionTitle id="awards-title" kicker="Credentials" title="수상 및 자격증" />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {awards.map((item) => (
           <article key={item.title} className="flex items-start gap-4 rounded-2xl bg-white p-5 card-shadow">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-mint text-forest">
+            <span
+              aria-hidden="true"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-mint text-forest"
+            >
               <Award className="h-5 w-5" />
             </span>
             <div>
@@ -342,7 +352,7 @@ function AwardsSection({ awards, skills }: Pick<Content, "awards" | "skills">) {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {skills.map((item) => (
           <article key={item.title} className="rounded-2xl border border-line bg-white p-5">
-            <span className="rounded-full bg-forest px-3 py-1 text-[11px] font-semibold text-white">
+            <span className="rounded-full bg-forest px-3 py-1 text-xs font-semibold text-white">
               {item.label}
             </span>
             <h4 className="mt-3 font-semibold text-ink">{item.title}</h4>
@@ -356,8 +366,8 @@ function AwardsSection({ awards, skills }: Pick<Content, "awards" | "skills">) {
 
 function ContactSection({ intro, contactValues }: Pick<Content, "intro" | "contactValues">) {
   return (
-    <section id="contact" className="mt-12 mb-4 scroll-mt-24">
-      <SectionTitle kicker="Connect" title="연락처" />
+    <section id="contact" aria-labelledby="contact-title" className="mt-12 mb-4 scroll-mt-24">
+      <SectionTitle id="contact-title" kicker="Connect" title="연락처" />
       <div className="grid gap-4 lg:grid-cols-[1fr_1.1fr]">
         <article className="hatch-strong flex flex-col justify-between overflow-hidden rounded-2xl bg-forest p-6 text-white">
           <div>
@@ -374,11 +384,14 @@ function ContactSection({ intro, contactValues }: Pick<Content, "intro" | "conta
           </div>
           <ul className="mt-8 space-y-3 text-sm">
             <li className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
+              <MapPin aria-hidden="true" className="h-4 w-4" />
+              <span className="sr-only">활동 지역:</span>
               {intro.location}
             </li>
             <li>
-              <a className="underline decoration-emerald-200 underline-offset-4" href={`mailto:${profile.email}`}>
+              <a
+                className="underline decoration-emerald-200 underline-offset-4 focus-visible:outline-white"
+                href={`mailto:${profile.email}`}>
                 {profile.email}
               </a>
             </li>

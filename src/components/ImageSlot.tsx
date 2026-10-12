@@ -31,6 +31,7 @@ export function ImageSlot({
 
   return (
     <div
+      aria-hidden="true"
       className={`flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed p-3 text-center ${
         dark ? "border-white/30 bg-white/10 text-emerald-100" : "border-line bg-mint text-sage"
       } ${className}`}

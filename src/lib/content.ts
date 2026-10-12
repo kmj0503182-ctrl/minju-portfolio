@@ -34,11 +34,11 @@ export type Content = {
   practices: { place: string; period: string; role: string; tags: string[]; summary: string }[];
   volunteers: { title: string; org: string; period: string; note: string }[];
   campusActivities: { title: string; date: string; desc: string; color: string }[];
-  projects: { title: string; period: string; summary: string; tags: string[]; image?: string }[];
+  projects: { title: string; period: string; summary: string; tags: string[]; image?: string; imageAlt?: string }[];
   awards: { title: string; org: string; year: string; type: string }[];
 };
 
-const campusColors = ["bg-sage", "bg-forest", "bg-emerald-300", "bg-teal-400", "bg-emerald-500"];
+const campusColors = ["bg-accent", "bg-forest", "bg-emerald-300", "bg-teal-400", "bg-emerald-500"];
 
 const staticIntro: Intro = {
   affiliation: `${fallback.profile.school} · ${fallback.profile.role}`,
@@ -129,6 +129,7 @@ function read(page: NotionPage) {
     order: text(p["순서"]) && !Number.isNaN(order) ? order : 999,
     visible: /^(yes|y|true|o|공개|예|✅)$/i.test(text(p["공개"])),
     image: (file?.file?.url ?? file?.external?.url) as string | undefined,
+    imageAlt: text(p["이미지 설명"]),
   };
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -252,6 +253,7 @@ export async function getContent(): Promise<Content> {
         summary: row.desc,
         tags: row.tags,
         image: row.image,
+        imageAlt: row.imageAlt || undefined,
       })),
       awards: of("수상·자격").map((row) => ({
         title: row.name,
