@@ -17,6 +17,7 @@ export type Content = {
   campusActivities: { title: string; date: string; desc: string; color: string }[];
   projects: { title: string; period: string; summary: string; tags: string[]; image?: string }[];
   awards: { title: string; org: string; year: string; type: string }[];
+  source: string;
 };
 
 const campusColors = ["bg-sage", "bg-forest", "bg-emerald-300", "bg-teal-400", "bg-emerald-500"];
@@ -28,6 +29,7 @@ const staticContent: Content = {
   campusActivities: fallback.campusActivities,
   projects: fallback.projects,
   awards: fallback.awards,
+  source: "static",
 };
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -83,7 +85,7 @@ async function notionFetch(path: string, version: string, body?: unknown) {
   const res = await fetch(`https://api.notion.com/v1/${path}`, {
     method: body ? "POST" : "GET",
     headers: {
-      Authorization: `Bearer ${process.env.NOTION_TOKEN}`,
+      Authorization: `Bearer ${process.env.NOTION_TOKEN?.trim()}`,
       "Notion-Version": version,
       "Content-Type": "application/json",
     },
@@ -118,9 +120,12 @@ export async function getContent(): Promise<Content> {
   "use cache";
   cacheLife("minutes");
 
-  const token = process.env.NOTION_TOKEN;
-  const databaseId = process.env.NOTION_DATABASE_ID;
-  if (!token || !databaseId) return staticContent;
+  const token = process.env.NOTION_TOKEN?.trim();
+  const rawId = process.env.NOTION_DATABASE_ID?.trim() ?? "";
+  const databaseId = (rawId.replace(/-/g, "").match(/[0-9a-f]{32}/i) ?? [rawId])[0];
+  if (!token || !databaseId) {
+    return { ...staticContent, source: `static:missing-env token=${Boolean(token)} id=${Boolean(databaseId)}` };
+  }
 
   try {
     const rows = (await queryAll(databaseId))
@@ -168,9 +173,11 @@ export async function getContent(): Promise<Content> {
         year: row.period,
         type: row.tags[0] ?? "수상",
       })),
+      source: `notion rows=${rows.length}`,
     };
   } catch (error) {
     console.error(error);
-    return staticContent;
+    const status = error instanceof Error ? (error.message.match(/^Notion (\d+)/)?.[1] ?? "network") : "unknown";
+    return { ...staticContent, source: `static:error ${status}` };
   }
 }
